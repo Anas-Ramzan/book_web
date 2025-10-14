@@ -12,9 +12,16 @@ const links = [
 
 export default function Navbar() {
   const pathname = usePathname();
+
   return (
-    <nav className="sticky top-0 z-50 border-b bg-[--color-surface]/80 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-center gap-6 px-4 py-4">
+    <nav className="sticky top-0 z-50 bg-surface/80 backdrop-blur">
+      <div
+        className="
+          mx-auto flex w-[1200px] items-center justify-center
+          gap-[55px] py-[13px]
+        "
+        style={{ height: "70px" }}
+      >
         {links.map((l) => {
           const active = pathname === l.href;
           return (
@@ -22,11 +29,16 @@ export default function Navbar() {
               key={l.href}
               href={l.href}
               className={[
-                "rounded-[--radius-pill] px-8 py-3 text-xl font-medium shadow transition",
-                "hover:-translate-y-0.5 hover:shadow-md",
+                // Size & shape
+                "inline-flex h-[40px] items-center justify-center rounded-[12px] px-[20px]",
+                // Typography
+                "text-white font-normal text-[22px] leading-none",
+                // Colors
                 active
-                  ? "bg-primary-800 text-white"
-                  : "bg-primary-700 hover:bg-primary-800 text-white",
+                  ? "bg-brand"
+                  : "bg-brand hover:brightness-110",
+                // Motion
+                "shadow-sm transition-transform duration-200 hover:-translate-y-0.5",
               ].join(" ")}
             >
               {l.label}

@@ -1,19 +1,20 @@
-import type { Metadata } from "next";
 import "./globals.css";
+import { Kodchasan } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-export const metadata: Metadata = {
-  title: "Landing — Your Brand",
-  description: "Simple Next.js landing page with a reusable navbar & footer.",
-};
+const kodchasan = Kodchasan({
+  subsets: ["latin"],
+  weight: ["400","500","600","700"],
+  variable: "--font-kodchasan",
+});
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="min-h-dvh bg-white text-gray-900 antialiased">
+    <html lang="en" className={kodchasan.variable}>
+      <body className="min-h-screen antialiased">
         <Navbar />
-        <main className="mx-auto max-w-6xl px-4">{children}</main>
+        <main>{children}</main>
         <Footer />
       </body>
     </html>
