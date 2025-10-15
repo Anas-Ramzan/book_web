@@ -30,7 +30,7 @@ export default function Navbar() {
               href={l.href}
               className={[
                 // Size & shape
-                "inline-flex h-[40px] items-center justify-center rounded-[12px] px-[20px]",
+                "inline-flex h-[32px] items-center justify-center rounded-[12px] px-[20px]",
                 // Typography
                 "text-white font-normal text-[22px] leading-none",
                 // Colors
