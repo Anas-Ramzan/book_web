@@ -2,7 +2,6 @@ import { Mail, Globe, Music } from "lucide-react";
 import { FaFacebookF, FaYoutube } from "react-icons/fa";
 import { Instrument_Sans } from "next/font/google";
 
-// Instrument Sans font only for footer
 const instrumentSans = Instrument_Sans({
   subsets: ["latin"],
   weight: ["400"],
@@ -12,43 +11,31 @@ const instrumentSans = Instrument_Sans({
 export default function Footer() {
   return (
     <footer
-      className={`${instrumentSans.variable} w-full bg-[#225685] text-white py-[28px]`}
+      className={`${instrumentSans.variable} w-full bg-[#225685] text-white py-8 sm:py-9`}
       style={{ fontFamily: "var(--font-instrument)" }}
     >
-      <div className="mx-auto w-full max-w-[1280px] px-[50px] flex flex-col items-center gap-[35px]">
+      <div className="container flex flex-col items-center gap-6 sm:gap-8">
         {/* Heading */}
-        <h2 className="text-center text-[26px] font-normal leading-none tracking-wide">
+        <h2 className="text-center text-[20px] sm:text-[24px] font-normal leading-none tracking-wide">
           Contact Us
         </h2>
 
-        {/* Links Row */}
-        <div className="flex flex-nowrap justify-center items-center gap-4 text-[11.5px] font-[400] leading-[100%]">
-          <a
-            href="#"
-            className="flex items-center gap-1 hover:underline underline-offset-4"
-          >
+        {/* Links Row (wrap on small) */}
+        <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2 text-[12px] sm:text-[13px]">
+          <a href="#" className="flex items-center gap-1 hover:underline underline-offset-4">
             <FaFacebookF size={13} /> Facebook@rachelrainmartin2013
           </a>
+          <span className="hidden sm:inline">/</span>
 
-          <span>/</span>
-
-          <a
-            href="#"
-            className="flex items-center gap-1 hover:underline underline-offset-4"
-          >
+          <a href="#" className="flex items-center gap-1 hover:underline underline-offset-4">
             <Music size={13} /> TikTok@rachelrainmartin
           </a>
+          <span className="hidden sm:inline">/</span>
 
-          <span>/</span>
-
-          <a
-            href="#"
-            className="flex items-center gap-1 hover:underline underline-offset-4"
-          >
+          <a href="#" className="flex items-center gap-1 hover:underline underline-offset-4">
             <FaYoutube size={13} /> YouTube@rachelrainmartin
           </a>
-
-          <span>/</span>
+          <span className="hidden sm:inline">/</span>
 
           <a
             href="mailto:rachelrain@rachelrainmartin.com"
@@ -56,8 +43,7 @@ export default function Footer() {
           >
             <Mail size={13} /> Email: rachelrain@rachelrainmartin.com
           </a>
-
-          <span>/</span>
+          <span className="hidden sm:inline">/</span>
 
           <a
             href="https://www.rachelrainmartin.com"
@@ -68,7 +54,7 @@ export default function Footer() {
         </div>
 
         {/* Copyright */}
-        <p className="text-center text-[12px] font-[400] leading-[100%] text-white">
+        <p className="text-center text-[11px] sm:text-[12px]">
           © 2025 Rachel Rain Martin / Privacy Policy / All Rights are Reserved
         </p>
       </div>

@@ -7,12 +7,26 @@
   --font-sans: var(--font-kodchasan);
 }
 
-html, body {
-  height: 100%;
-}
-
+html, body { height: 100%; }
 body {
   background: white;
   color: black;
   font-family: var(--font-kodchasan, system-ui, sans-serif);
+}
+
+/* Responsive container (like Tailwind’s container but simplified) */
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+  max-width: 1200px; /* desktop cap */
+}
+
+/* Tiny helper for very small phones (optional) */
+@media (min-width: 420px) {
+  .xs\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }

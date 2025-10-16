@@ -5,14 +5,14 @@ import Footer from "@/components/Footer";
 
 const kodchasan = Kodchasan({
   subsets: ["latin"],
-  weight: ["400","500","600","700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-kodchasan",
 });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={kodchasan.variable}>
-      <body className="min-h-screen antialiased">
+      <body className="min-h-screen antialiased bg-white text-black">
         <Navbar />
         <main>{children}</main>
         <Footer />
