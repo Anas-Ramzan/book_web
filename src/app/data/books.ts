@@ -1,4 +1,5 @@
-// app/data/books.ts
+// src/app/data/books.ts
+
 export type Book = {
   slug: string;             // URL: /book/[slug]
   title: string;
@@ -17,35 +18,103 @@ export type Book = {
 };
 
 export const books: Book[] = [
+  // ---------------- PUBLISHED ----------------
   {
-    slug: "a-magical-day",
-    title: "A Magical Day",
-    authors: ["Rachel Rain Martin (Author)", "Tatiana Kutsachenko (Illustrator)"],
+    slug: "on-the-bluffs-of-cane-creek",
+    title: "On the Bluffs of Cane Creek",
+    authors: ["Rachel Rain Martin"],
     cover: "/img1.png",
     hero: "/hero.png",
     status: "published",
-    rating: 5.0,
-    readingAge: "6 - 8 years",
+    rating: 4.9,
     language: "English",
-    pages: 24,
-    dims: "8 x 0.06 x 8 inches",
-    releaseDate: "May 15, 2024",
+    pages: 320,
+    dims: "6 x 9 inches",
     blurb:
-      `In "A Magical Day" by Rachel Rain Martin, a young girl is captivated by the sea's mysteries...`,
-    // buyLink: "https://www.amazon.com/dp/XXXXXXXX",  // apna link
+      `A haunting, poetic journey through time and memory, “On the Bluffs of Cane Creek” tells the story of a young woman’s search for truth in a town haunted by the past.`,
   },
   {
-    slug: "tales-from-tumptown-creek",
-    title: "Tales from Tumptown Creek",
+    slug: "montana-dreamer",
+    title: "Montana Dreamer",
+    authors: ["Rachel Rain Martin"],
+    cover: "/img2.png",
+    status: "published",
+    rating: 4.8,
+    language: "English",
+    pages: 280,
+    dims: "6 x 9 inches",
+    blurb:
+      `A tender story about love, loss, and finding strength in wide Montana skies.`,
+  },
+  {
+    slug: "ashes-of-richmond",
+    title: "Ashes of Richmond",
+    authors: ["Rachel Rain Martin"],
+    cover: "/img3.png",
+    status: "published",
+    rating: 4.7,
+    language: "English",
+    pages: 310,
+    dims: "6 x 9 inches",
+    blurb:
+      `Amid war and fire, courage rises. “Ashes of Richmond” follows the intertwined lives of two families surviving the aftermath of conflict.`,
+  },
+  {
+    slug: "ghosts-of-luna-creek",
+    title: "Ghosts of Luna Creek",
+    authors: ["Rachel Rain Martin"],
+    cover: "/img4.png",
+    status: "published",
+    rating: 4.8,
+    language: "English",
+    pages: 295,
+    dims: "6 x 9 inches",
+    blurb:
+      `When tragedy strikes in a small Appalachian town, echoes of the past return in mysterious ways. “Ghosts of Luna Creek” blends mystery and magic into a timeless tale.`,
+  },
+  {
+    slug: "talking-with-tomas",
+    title: "Talking with Tomas",
+    authors: ["Rachel Rain Martin"],
+    cover: "/img5.png",
+    status: "published",
+    rating: 4.9,
+    language: "English",
+    pages: 250,
+    dims: "6 x 9 inches",
+    blurb:
+      `A story of forgiveness and rediscovery, “Talking with Tomas” explores how old wounds can heal through the power of empathy and truth.`,
+  },
+
+  // ---------------- COMING SOON ----------------
+  {
+    slug: "tales-from-turniptown-creek",
+    title: "Tales from Turniptown Creek",
     authors: ["Rachel Rain Martin"],
     cover: "/cm1.png",
     hero: "/header2.png",
     status: "coming-soon",
-    blurb: "Short teaser / coming soon description...",
-    buyLink: "", // jab live ho to add kar dena
+    blurb:
+      `When the extraordinary meets the unknown — a mysterious river town where every whisper carries a story.`,
   },
-  // ...baqi books yahan add karein
+  {
+    slug: "is-the-mail-up-yet",
+    title: "Is The Mail Up Yet?",
+    authors: ["Rachel Rain Martin"],
+    cover: "/cm2.png",
+    status: "coming-soon",
+    blurb:
+      `A humorous, heartwarming look into small-town life — full of gossip, surprises, and old-fashioned charm.`,
+  },
+  {
+    slug: "a-new-sheriff-in-olde-towne",
+    title: "A New Sheriff in Olde Towne",
+    authors: ["Rachel Rain Martin"],
+    cover: "/cm3.png",
+    status: "coming-soon",
+    blurb:
+      `Romance and redemption collide in this exciting addition to the Sisters McConnell series.`,
+  },
 ];
 
-// Helper (re-use on pages)
-export const getBook = (slug: string) => books.find(b => b.slug === slug);
+export const getBook = (slug: string) => books.find((b) => b.slug === slug);

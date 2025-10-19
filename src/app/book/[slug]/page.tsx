@@ -1,113 +1,136 @@
+// src/app/book/[slug]/page.tsx
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { books, getBook } from "@/app/data/books";
+import { books } from "@/app/data/books";
+import { La_Belle_Aurore } from "next/font/google";
 
-type Props = { params: { slug: string } };
+const laBelle = La_Belle_Aurore({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-la-belle",
+});
 
+// Pre-render all book pages (SSG)
 export function generateStaticParams() {
-  return books.map(b => ({ slug: b.slug })); // SSG for all
+  return books.map((b) => ({ slug: b.slug }));
 }
 
-export async function generateMetadata({ params }: Props) {
-  const b = getBook(params.slug);
-  if (!b) return {};
+// (optional) SEO
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const book = books.find((b) => b.slug === params.slug);
+  if (!book) return {};
   return {
-    title: `${b.title} • Rachel Rain Martin`,
-    description: b.blurb?.slice(0, 150),
-    openGraph: { title: b.title, description: b.blurb?.slice(0, 200), images: [{ url: b.cover }] },
+    title: `${book.title} • Rachel Rain Martin`,
+    description: book.blurb?.slice(0, 150),
+    openGraph: {
+      title: book.title,
+      description: book.blurb?.slice(0, 200),
+      images: [{ url: book.cover }],
+    },
   };
 }
 
-export default function BookPage({ params }: Props) {
-  const b = getBook(params.slug);
-  if (!b) notFound();
+export default function BookPage({ params }: { params: { slug: string } }) {
+  const book = books.find((b) => b.slug === params.slug);
+  if (!book) notFound();
 
   return (
     <section className="relative py-8 sm:py-10">
-      <h1 className="text-center text-[34px] sm:text-[44px] leading-[1.1] font-serif">
+      {/* Top Name to match your style */}
+      <h1
+        className={`${laBelle.variable} text-center text-[34px] sm:text-[44px] leading-[1.1]`}
+        style={{ fontFamily: "var(--font-la-belle)" }}
+      >
         Rachel Rain Martin
       </h1>
 
-      {/* main grid */}
-      <div className="container mt-6 grid gap-6 md:grid-cols-[320px,1fr]">
-        {/* LEFT: cover */}
+      {/* Optional top banner */}
+      {book.hero && (
+        <div className="container mt-6">
+          <div className="overflow-hidden rounded-[10px]">
+            <Image
+              src={book.hero}
+              alt={book.title}
+              width={1334}
+              height={496}
+              className="w-full h-[200px] sm:h-[320px] md:h-[380px] lg:h-[420px] object-cover"
+              priority
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Main grid: cover + details */}
+      <div className="container mt-8 grid gap-8 md:grid-cols-[320px,1fr]">
+        {/* LEFT: cover + Buy button */}
         <div className="flex flex-col items-center">
-          <div className="relative w-[280px] aspect-[220/309] rounded-lg overflow-hidden shadow">
-            <Image src={b.cover} alt={b.title} fill className="object-cover" />
+          <div className="relative w-[280px] aspect-[220/309] overflow-hidden rounded-lg shadow-md">
+            <Image src={book.cover} alt={book.title} fill className="object-cover" />
           </div>
 
-          {/* Buy button (Amazon type) */}
-          {b.buyLink && (
+          {/* Amazon-type button (shows only if buyLink exists & not empty) */}
+          {book.buyLink && book.buyLink.trim().length > 0 && (
             <Link
-              href={b.buyLink}
-              target="_blank" rel="noopener noreferrer"
-              className="mt-5 rounded-full px-6 py-3 text-sm font-medium bg-gradient-to-b from-[#cfd7ff] to-[#bcc7ff] text-[#2c2c2c] shadow-md hover:opacity-90"
+              href={book.buyLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-5 inline-flex rounded-full px-6 py-3 text-sm font-medium bg-gradient-to-b from-[#d9e0ff] to-[#bcc7ff] text-[#1f2937] shadow hover:opacity-90"
             >
               Shop now
             </Link>
           )}
         </div>
 
-        {/* RIGHT: info */}
+        {/* RIGHT: textual info */}
         <div>
-          <div className="text-lg font-semibold">{b.title}</div>
+          <div className="text-xl sm:text-2xl font-semibold">{book.title}</div>
           <div className="text-sm text-gray-700 mt-1">
-            {b.releaseDate && <>Paperback — {b.releaseDate} • </>}
-            by {b.authors.join(", ")}
+            {book.releaseDate && <>Paperback — {book.releaseDate} • </>}
+            by {book.authors.join(", ")}
           </div>
 
-          {b.rating && (
-            <div className="mt-2 text-sm">
-              Rating: {b.rating.toFixed(1)} ★★★★★{/* replace with stars UI later if you want */}
+          {typeof book.rating === "number" && (
+            <div className="mt-2 text-sm text-gray-800">
+              Rating: {book.rating.toFixed(1)} ★★★★★
             </div>
           )}
 
-          <hr className="my-3" />
+          <hr className="my-4" />
 
           <p className="text-[15px] sm:text-[16px] leading-7 text-gray-900 whitespace-pre-line">
-            {b.blurb}
+            {book.blurb}
           </p>
 
-          {/* product details tiles */}
+          {/* Product details tiles */}
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-            {b.readingAge && (
+            {book.readingAge && (
               <div className="rounded-lg bg-[#f1f4f9] p-4">
                 <div className="font-semibold">Reading age</div>
-                <div>{b.readingAge}</div>
+                <div>{book.readingAge}</div>
               </div>
             )}
-            {b.language && (
+            {book.language && (
               <div className="rounded-lg bg-[#f1f4f9] p-4">
                 <div className="font-semibold">Language</div>
-                <div>{b.language}</div>
+                <div>{book.language}</div>
               </div>
             )}
-            {b.pages && (
+            {book.pages && (
               <div className="rounded-lg bg-[#f1f4f9] p-4">
                 <div className="font-semibold">Print length</div>
-                <div>{b.pages} pages</div>
+                <div>{book.pages} pages</div>
               </div>
             )}
-            {b.dims && (
+            {book.dims && (
               <div className="rounded-lg bg-[#f1f4f9] p-4">
                 <div className="font-semibold">Dimensions</div>
-                <div>{b.dims}</div>
+                <div>{book.dims}</div>
               </div>
             )}
           </div>
         </div>
       </div>
-
-      {/* Optional hero below/above */}
-      {b.hero && (
-        <div className="container mt-10">
-          <div className="overflow-hidden rounded-[10px]">
-            <Image src={b.hero} alt={b.title} width={1334} height={496}
-                   className="w-full h-[220px] sm:h-[320px] md:h-[400px] object-cover" />
-          </div>
-        </div>
-      )}
     </section>
   );
 }

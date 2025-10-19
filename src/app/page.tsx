@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { La_Belle_Aurore } from "next/font/google";
+import Link from "next/link";
+import { books as allBooks } from "./data/books";
 
 const laBelle = La_Belle_Aurore({
   weight: "400",
@@ -8,14 +10,8 @@ const laBelle = La_Belle_Aurore({
 });
 
 export default function HomePage() {
-  const books = [
-    "/img1.png",
-    "/img2.png",
-    "/img3.png",
-    "/img4.png",
-    "/img5.png",
-  ];
-  const comingSoon = ["/cm1.png", "/cm2.png", "/cm3.png"];
+  const books = allBooks.filter((b) => b.status === "published");
+  const comingSoon = allBooks.filter((b) => b.status === "coming-soon");
 
   return (
     <>
@@ -46,18 +42,19 @@ export default function HomePage() {
         {/* Book Covers — single row on large screens */}
         <div className="mx-auto mt-10 w-full max-w-[1200px] px-0">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
-            {books.map((src, i) => (
-              <div
-                key={i}
+            {books.map((b) => (
+              <Link
+                key={b.slug}
+                href={`/book/${b.slug}`}
                 className="relative w-full aspect-[220/309] overflow-hidden rounded-lg shadow-md transition-transform duration-300 hover:scale-105"
               >
                 <Image
-                  src={src}
-                  alt={`Book ${i + 1}`}
+                  src={b.cover}
+                  alt={b.title}
                   fill
                   className="object-cover"
                 />
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -120,35 +117,25 @@ export default function HomePage() {
           </h2>
 
           <div className="flex flex-col lg:flex-row justify-center items-center lg:items-start gap-6 sm:gap-8">
-            {/* LEFT (narrow on lg) */}
-            <div className="relative w-full max-w-[460px] h-[260px] sm:h-[320px] lg:w-[260px] lg:h-[390px] overflow-hidden rounded-lg shadow-md bg-white transition-transform hover:scale-105">
-              <Image
-                src="/cm1.png"
-                alt="Coming Soon 1"
-                fill
-                className="object-cover"
-              />
-            </div>
-
-            {/* CENTER (wide on lg) */}
-            <div className="relative w-full max-w-[700px] h-[220px] sm:h-[280px] lg:w-[589px] lg:h-[390px] overflow-hidden rounded-lg shadow-md bg-white transition-transform hover:scale-105">
-              <Image
-                src="/cm2.png"
-                alt="Coming Soon 2"
-                fill
-                className="object-cover"
-              />
-            </div>
-
-            {/* RIGHT (narrow on lg) */}
-            <div className="relative w-full max-w-[460px] h-[260px] sm:h-[320px] lg:w-[260px] lg:h-[390px] overflow-hidden rounded-lg shadow-md bg-white transition-transform hover:scale-105">
-              <Image
-                src="/cm3.png"
-                alt="Coming Soon 3"
-                fill
-                className="object-cover"
-              />
-            </div>
+            {comingSoon.map((b, idx) => (
+              <Link
+                key={b.slug}
+                href={`/book/${b.slug}`}
+                className={[
+                  "relative overflow-hidden rounded-lg shadow-md bg-white transition-transform hover:scale-105",
+                  idx === 1
+                    ? "w-full max-w-[700px] h-[220px] sm:h-[280px] lg:w-[589px] lg:h-[390px]"
+                    : "w-full max-w-[460px] h-[260px] sm:h-[320px] lg:w-[260px] lg:h-[390px]",
+                ].join(" ")}
+              >
+                <Image
+                  src={b.cover}
+                  alt={b.title}
+                  fill
+                  className="object-cover"
+                />
+              </Link>
+            ))}
           </div>
         </section>
 
