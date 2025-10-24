@@ -38,9 +38,10 @@ export default function HomePage() {
             />
           </div>
         </div>
+        <Image src={'/Vector 11.png'} width={20} height={20} alt="" className="w-full absolute -z-1 right-0 -top-20" unoptimized />
 
         {/* Book Covers — single row on large screens */}
-        <div className="mx-auto mt-10 w-full max-w-[1200px] px-0">
+        <div className="mx-auto mt-10 w-full max-w-[1200px] px-0" id="book">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
             {books.map((b) => (
               <Link
@@ -60,7 +61,7 @@ export default function HomePage() {
         </div>
 
         {/* About + Subscribe */}
-        <section className="container mt-12 sm:mt-16">
+        <section className="container mt-12 sm:mt-16" id="about">
           <div className="rounded-[10px] bg-white p-5 sm:p-8 md:p-10 grid gap-8 md:grid-cols-2 items-start md:items-center">
             {/* LEFT — author info */}
             <div>
@@ -111,7 +112,7 @@ export default function HomePage() {
         </section>
 
         {/* Coming Soon — desktop widths match Figma; mobile stacks */}
-        <section className="container mt-12 sm:mt-14 mb-10 text-center">
+        <section className="container mt-12 sm:mt-14 mb-10 text-center" id="coming-soon">
           <h2 className="text-[24px] sm:text-[28px] md:text-[30px] font-semibold text-[#18436a] mb-6 sm:mb-8">
             Coming soon
           </h2>

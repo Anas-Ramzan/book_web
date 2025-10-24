@@ -1,26 +1,47 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
 const links = [
   { href: "/", label: "Home" },
-  { href: "/book", label: "Book" },
-  { href: "/coming-soon", label: "Coming soon" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
+  { href: "#book", label: "Book" },
+  { href: "#coming-soon", label: "Coming soon" },
+  { href: "#about", label: "About" },
+  { href: "#contact", label: "Contact" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+
+  const handleNavClick = (href: string) => {
+    // Close mobile menu
+    setOpen(false);
+
+    if (href.startsWith("#")) {
+      if (pathname === "/") {
+        // On homepage -> smooth scroll
+        const element = document.querySelector(href);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      } else {
+        // On another page -> go to homepage with hash
+        router.push("/" + href);
+      }
+    } else {
+      router.push(href);
+    }
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-surface/80 backdrop-blur border-b border-black/5">
       <div className="container flex h-[60px] items-center justify-between">
-        {/* Brand (use text for now) */}
+        {/* Brand */}
         <Link href="/" className="text-lg font-semibold text-[#225685]">
           Rachel Rain Martin
         </Link>
@@ -30,9 +51,9 @@ export default function Navbar() {
           {links.map((l) => {
             const active = pathname === l.href;
             return (
-              <Link
+              <button
                 key={l.href}
-                href={l.href}
+                onClick={() => handleNavClick(l.href)}
                 className={[
                   "inline-flex h-[34px] items-center justify-center rounded-[12px] px-[14px] lg:px-[20px]",
                   "text-white text-[14px] lg:text-[16px]",
@@ -41,7 +62,7 @@ export default function Navbar() {
                 ].join(" ")}
               >
                 {l.label}
-              </Link>
+              </button>
             );
           })}
         </div>
@@ -60,22 +81,20 @@ export default function Navbar() {
       {open && (
         <div className="md:hidden border-t border-black/5 bg-white/95 backdrop-blur">
           <div className="container py-4 flex flex-col gap-2">
-            {links.map((l) => {
-              const active = pathname === l.href;
-              return (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  onClick={() => setOpen(false)}
-                  className={[
-                    "w-full rounded-md px-4 py-3 text-sm",
-                    active ? "bg-[#225685] text-white" : "hover:bg-surface",
-                  ].join(" ")}
-                >
-                  {l.label}
-                </Link>
-              );
-            })}
+            {links.map((l) => (
+              <button
+                key={l.href}
+                onClick={() => handleNavClick(l.href)}
+                className={[
+                  "w-full rounded-md px-4 py-3 text-sm text-left",
+                  pathname === l.href
+                    ? "bg-[#225685] text-white"
+                    : "hover:bg-surface",
+                ].join(" ")}
+              >
+                {l.label}
+              </button>
+            ))}
           </div>
         </div>
       )}

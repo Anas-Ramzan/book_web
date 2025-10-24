@@ -11,6 +11,7 @@ const instrumentSans = Instrument_Sans({
 export default function Footer() {
   return (
     <footer
+      id="contact"
       className={`${instrumentSans.variable} w-full bg-[#225685] text-white py-8 sm:py-9`}
       style={{ fontFamily: "var(--font-instrument)" }}
     >
