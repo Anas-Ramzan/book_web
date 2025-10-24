@@ -40,7 +40,6 @@ export default function HomePage() {
         </div>
         <Image src={'/Vector 11.png'} width={20} height={20} alt="" className="w-full absolute -z-1 right-0 -top-20" unoptimized />
 
-        {/* Book Covers — single row on large screens */}
         <div className="mx-auto mt-10 w-full max-w-[1200px] px-0" id="book">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
             {books.map((b) => (
