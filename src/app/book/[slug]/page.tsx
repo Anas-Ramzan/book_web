@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { books } from "@/app/data/books";
+import { createClient } from "@/utils/supabase/server";
 import { La_Belle_Aurore, Inter } from "next/font/google";
+import { ArrowLeft } from "lucide-react";
 
 const laBelle = La_Belle_Aurore({
   weight: "400",
@@ -16,169 +17,192 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-function Star({ filled }: { filled: boolean }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-[18px] w-[18px]"
-      fill={filled ? "#facc15" : "none"}
-      stroke="#facc15"
-      strokeWidth="1.5"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M11.48 3.5c.2-.5.84-.5 1.04 0l1.77 4.43c.1.26.34.44.62.48l4.78.68c.53.07.74.74.36 1.11l-3.46 3.36c-.2.2-.29.48-.24.76l.82 4.74c.09.53-.47.94-.95.69l-4.29-2.26a.83.83 0 0 0-.79 0l-4.29 2.26c-.48.25-1.04-.16-.95-.69l.82-4.74c.05-.28-.05-.56-.24-.76L3.94 10.2a.73.73 0 0 1 .36-1.11l4.78-.68c.28-.04.52-.22.62-.48l1.77-4.43Z"
-      />
-    </svg>
-  );
-}
-
-export function generateStaticParams() {
-  return books.map((b) => ({ slug: b.slug }));
-}
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const book = books.find((b) => b.slug === params.slug);
+  const supabase = createClient();
+  const { data: book } = await supabase
+    .from("books")
+    .select("*")
+    .eq("slug", params.slug)
+    .single();
+
   if (!book) return {};
   return {
-    title: `${book.title} • Rachel Rain Martin`,
-    description: book.blurb?.slice(0, 150),
+    title: `${book.name} • Rachel Rain Martin`,
+    description: book.description?.slice(0, 150) || "",
     openGraph: {
-      title: book.title,
-      description: book.blurb?.slice(0, 200),
-      images: [{ url: book.cover }],
+      title: book.name,
+      description: book.description?.slice(0, 200) || "",
+      images: book.cover_image ? [{ url: book.cover_image }] : [],
     },
   };
 }
 
-export default function BookPage({ params }: { params: { slug: string } }) {
-  const book = books.find((b) => b.slug === params.slug);
-  if (!book) notFound();
+export default async function BookPage({ params }: { params: { slug: string } }) {
+  const supabase = createClient();
+  const { data: book, error } = await supabase
+    .from("books")
+    .select("*")
+    .eq("slug", params.slug)
+    .single();
 
-  const rating = typeof book.rating === "number" ? Math.max(0, Math.min(5, book.rating)) : 0;
-  const fullStars = Math.round(rating);
+  if (error || !book) {
+    notFound();
+  }
 
-  // Temporary descriptions (replace with admin data later)
-  const mockDescriptions: Record<string, string> = {
-    "A Magical Day":
-      `In "A Magical Day" by Rachel Rain Martin, a young girl is captivated by the sea's mysteries. As she sits by the shore's edge, a low tide reveals a hidden treasure—a magical door. Intrigued by the ocean's whispers, she musters the courage to open it and finds herself in a wondrous world teeming with sea creatures and endless wonder. Through shimmering light and gentle rhythm, this tale celebrates courage, imagination, and the beauty of discovery.`,
-    "On the Bluffs of Cane Creek":
-      `Set against the haunting beauty of the countryside, "On the Bluffs of Cane Creek" follows a young woman’s search for truth and belonging. When echoes of the past resurface, she discovers courage hidden within her heart. Rachel Rain Martin weaves an emotional story of memory, loss, and redemption—reminding us that love and forgiveness often bloom where pain once grew.`,
-    "Ashes of Richmond":
-      `"Ashes of Richmond" unfolds in a world scarred by war yet alive with hope. Through broken cities and fragile dreams, characters strive to rebuild not only their homes but their hearts. Rachel Rain Martin paints an unforgettable picture of survival, courage, and human resilience, showing that healing is born from the ashes of our deepest wounds.`,
-    "Whispers of Willow Creek":
-      `Whispers drift through time in "Whispers of Willow Creek," where hidden letters uncover stories of love and sorrow that span generations. Rachel Rain Martin captures the gentle balance between remembering and moving on, crafting a story that feels like memory itself—soft, nostalgic, and achingly beautiful.`,
-  };
-
-  const description =
-    mockDescriptions[book.title] ||
-    `In “${book.title},” Rachel Rain Martin explores emotion, connection, and the quiet power of change. This evocative story blends tenderness with introspection, guiding readers through landscapes of heart and mind that stay with them forever. and the quiet power of change. This evocative story blends tenderness with introspection, `;
+  const description = book.description || `In "${book.name}," Rachel Rain Martin explores emotion, connection, and the quiet power of change. This evocative story blends tenderness with introspection, guiding readers through landscapes of heart and mind that stay with them forever.`;
 
   return (
-    // 👇 Entire page uses Inter font
-    <section className={`${inter.variable} use-inter relative py-8 sm:py-10`}>
-      {/* Author Signature */}
-      <h1
-        className={`${laBelle.variable} text-center text-[40px] sm:text-[52px] leading-[1.1] mb-6`}
-        style={{ fontFamily: "var(--font-la-belle)" }}
-      >
-        Rachel Rain Martin
-      </h1>
+    <section className={`${inter.variable} use-inter relative min-h-screen bg-gradient-to-b from-gray-50 to-white animate-fade-in`}>
+      {/* Back Button */}
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 pt-6 sm:pt-8">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors duration-200 group mb-6"
+        >
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" />
+          <span className="text-sm font-medium">Back to Books</span>
+        </Link>
+      </div>
 
-      {/* Main Layout */}
-      <div className="container mx-auto px-4 sm:px-6 md:px-8">
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-10">
-          {/* LEFT: Book Cover */}
-          <div className="shrink-0">
-            <Image
-              src={book.cover}
-              alt={book.title}
-              width={400}
-              height={400}
-              className="rounded-md shadow-md object-cover"
-              priority
-            />
+      {/* Hero Section with Book Cover */}
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 pb-12">
+        <div className="max-w-6xl mx-auto">
+          {/* Book Cover and Info Card */}
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 animate-fade-in-up">
+            <div className="flex flex-col lg:flex-row">
+              {/* Book Cover Section */}
+              <div className="lg:w-2/5 p-6 sm:p-8 lg:p-12 bg-gradient-to-br from-gray-50 to-gray-100 flex items-start justify-center">
+                {book.cover_image ? (
+                  <div className="relative w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[360px] mx-auto">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-2xl blur-2xl transform rotate-6"></div>
+                    <Image
+                      src={book.cover_image}
+                      alt={book.name}
+                      width={400}
+                      height={600}
+                      className="relative rounded-xl shadow-2xl object-cover w-full transition-transform duration-500 hover:scale-105"
+                      priority
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[360px] h-[420px] bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl shadow-2xl flex items-center justify-center mx-auto">
+                    <span className="text-gray-500 text-sm font-medium">No Cover Image</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Book Info Section */}
+              <div className="lg:w-3/5 p-6 sm:p-8 lg:p-12 flex flex-col justify-center">
+                {/* Author Name */}
+                <div className="mb-4">
+                  <h2
+                    className={`${laBelle.variable} text-[28px] sm:text-[32px] md:text-[36px] text-gray-800 mb-2`}
+                    style={{ fontFamily: "var(--font-la-belle)" }}
+                  >
+                    Rachel Rain Martin
+                  </h2>
+                </div>
+
+                {/* Book Title */}
+                <h1 className="text-[32px] sm:text-[40px] md:text-[48px] font-bold text-gray-900 leading-tight mb-4">
+                  {book.name}
+                </h1>
+
+                {/* Author */}
+                <div className="flex items-center gap-2 mb-6">
+                  <span className="text-gray-600 text-lg">by</span>
+                  <span className="text-gray-900 text-lg font-semibold">{book.author}</span>
+                </div>
+
+                {/* Divider */}
+                <div className="w-20 h-1 bg-gradient-to-r from-[#225685] to-[#C9D2FF] rounded-full mb-6"></div>
+
+                {/* Description */}
+                <div className="mb-8">
+                  <p className="text-[16px] sm:text-[17px] md:text-[18px] leading-relaxed text-gray-700 max-w-2xl">
+                    {description}
+                  </p>
+                </div>
+
+                {/* CTA Button */}
+                {book.amazon_link && book.amazon_link.trim() !== "" && (
+                  <div className="mt-auto">
+                    <Link
+                      href={book.amazon_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center justify-center gap-3 rounded-full px-8 py-4 sm:px-10 sm:py-5 text-base sm:text-lg font-semibold
+                                 bg-gradient-to-r from-[#225685] to-[#1b466d] text-white
+                                 shadow-lg hover:shadow-xl transition-all duration-300 
+                                 hover:scale-105 active:scale-95 hover:from-[#1b466d] hover:to-[#225685]"
+                    >
+                      <span>Shop on Amazon</span>
+                      <svg 
+                        className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
-          {/* RIGHT: Info */}
-          <div className="flex-1 text-gray-900">
-            <div className="text-[24px] font-semibold tracking-tight mb-1">
-              {book.title}
-              {book.releaseDate && (
-                <span className="ml-2 font-normal text-gray-700">
-                  Paperback – {book.releaseDate}
-                </span>
-              )}
-            </div>
-
-            <div className="text-[16px] text-gray-800 mb-3">
-              by <span className="font-medium">{book.authors.join(", ")}</span>
-            </div>
-
-            <hr className="border-gray-300 mb-3" />
-
-            {/* Rating */}
-            <div className="flex items-center gap-2 text-[16px] mb-3">
-              <span className="font-medium">Rating:</span>
-              <span>{rating.toFixed(1)}</span>
-              <div className="flex items-center">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} filled={i < fullStars} />
-                ))}
+          {/* Additional Info Section */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+            {/* Book Details Card */}
+            <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Book Details</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Author</span>
+                  <span className="text-gray-900 font-medium">{book.author}</span>
+                </div>
+                {book.created_at && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Published</span>
+                    <span className="text-gray-900 font-medium">
+                      {new Date(book.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 
-            <hr className="border-gray-300 mb-4" />
-
-            {/* Description */}
-            <p className="text-[17px] leading-[1.9] text-gray-900 max-w-[700px]">
-              {description}
-            </p>
-
-            {/* CTA */}
-            {book.buyLink && book.buyLink.trim() !== "" && (
-              <div className="mt-6">
+            {/* Purchase Card */}
+            {book.amazon_link && book.amazon_link.trim() !== "" && (
+              <div className="bg-gradient-to-br from-[#E9ECFF] to-[#C9D2FF] rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
+                <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Available Now</h3>
+                <p className="text-gray-800 text-sm mb-4">Get your copy from Amazon</p>
                 <Link
-                  href={book.buyLink}
+                  href={book.amazon_link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex rounded-full px-8 py-3 text-[15px] font-medium
-                             bg-gradient-to-b from-[#E9ECFF] to-[#C9D2FF] text-[#2a2a2a]
-                             shadow-md hover:opacity-95 transition"
+                  className="inline-flex items-center text-sm font-semibold text-[#225685] hover:text-[#1b466d] transition-colors"
                 >
-                  Shop now
+                  View on Amazon
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </Link>
               </div>
             )}
-          </div>
-        </div>
-      </div>
 
-      {/* Product Details */}
-      <div className="mt-12 container mx-auto px-4 sm:px-6 md:px-8">
-        <div className="text-left text-[20px] sm:text-[22px] font-semibold text-[#1c3b60] mb-6">
-          Product details
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
-          <div>
-            <div className="text-sm text-gray-600">Reading age</div>
-            <div className="text-[15px] font-medium mt-1">{book.readingAge ?? "—"}</div>
-          </div>
-          <div>
-            <div className="text-sm text-gray-600">Language</div>
-            <div className="text-[15px] font-medium mt-1">{book.language ?? "—"}</div>
-          </div>
-          <div>
-            <div className="text-sm text-gray-600">Print length</div>
-            <div className="text-[15px] font-medium mt-1">
-              {book.pages ? `${book.pages} pages` : "—"}
-            </div>
-          </div>
-          <div>
-            <div className="text-sm text-gray-600">Dimensions</div>
-            <div className="text-[15px] font-medium mt-1">{book.dims ?? "—"}</div>
+            {/* Coming Soon Badge */}
+            {book.coming_soon && (
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 shadow-md border border-amber-200">
+                <h3 className="text-sm font-semibold text-amber-800 uppercase tracking-wide mb-2">Status</h3>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-100 rounded-full">
+                  <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+                  <span className="text-sm font-semibold text-amber-800">Coming Soon</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
