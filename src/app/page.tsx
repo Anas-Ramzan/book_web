@@ -4,7 +4,6 @@ import { createClient } from "@/utils/supabase/server";
 
 export const revalidate = 60; // optional: revalidate every 60s (SSG + ISR)
 
-// ✅ Define TypeScript type matching Supabase schema
 interface Book {
   id: string;
   name: string;
