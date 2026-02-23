@@ -132,20 +132,25 @@ export default async function BookPage({ params }: { params: { slug: string } })
                       href={book.amazon_link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group inline-flex items-center justify-center gap-3 rounded-full px-8 py-4 sm:px-10 sm:py-5 text-base sm:text-lg font-semibold
-                                 bg-gradient-to-r from-[#225685] to-[#1b466d] text-white
-                                 shadow-lg hover:shadow-xl transition-all duration-300 
-                                 hover:scale-105 active:scale-95 hover:from-[#1b466d] hover:to-[#225685]"
+                     
                     >
+                      <div  className="group inline-flex items-center justify-center gap-3 rounded-full px-8 py-4 sm:px-10 sm:py-5 text-base sm:text-lg font-semibold
+                                 bg-linear-to-r from-brand to-[#1b466d] text-white
+                                 shadow-lg hover:shadow-xl transition-all duration-300 
+                                 hover:scale-105 active:scale-95 hover:from-[#1b466d] hover:to-brand">
+                        
+                     
                       <span>Shop on Amazon</span>
-                      <svg 
+                     
+                     
+                       <svg 
                         className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" 
                         fill="none" 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                      </svg>
+                      </svg> </div>
                     </Link>
                   </div>
                 )}

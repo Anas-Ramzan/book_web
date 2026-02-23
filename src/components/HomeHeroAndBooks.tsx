@@ -36,11 +36,11 @@ export default function HomeHeroAndBooks({ books }: { books: BookCard[] }) {
       <div className="container mt-6 sm:mt-8 animate-fade-in-up">
         <div className="overflow-hidden rounded-[10px]">
           <Image
-            src="/hero.png"
+            src="/hero1.jpeg"
             alt="Rachel Rain Martin Book"
             width={1334}
             height={496}
-            className="w-full h-[220px] sm:h-[320px] md:h-[400px] lg:h-[450px] object-cover transition-transform duration-500 hover:scale-[1.02]"
+            className="w-full h-[220px] sm:h-[320px] md:h-[400px] lg:h-[450px] object-contain transition-transform duration-500 hover:scale-[1.02]"
             priority
           />
         </div>
