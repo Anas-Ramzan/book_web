@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { La_Belle_Aurore, Inter } from "next/font/google";
 import { ArrowLeft } from "lucide-react";
+import { cache } from "react";
 
 const laBelle = La_Belle_Aurore({
   weight: "400",
@@ -18,15 +19,31 @@ const inter = Inter({
 });
 
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+type BookPageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+const getBook = cache(async (slug: string) => {
   const supabase = createClient();
-  const { data: book } = await supabase
+  const { data: book, error } = await supabase
     .from("books")
     .select("*")
-    .eq("slug", params.slug)
-    .single();
+    .eq("slug", slug)
+    .maybeSingle();
 
-  if (!book) return {};
+  if (error) {
+    console.error("Failed to load book:", error.code || "NETWORK_ERROR");
+    throw new Error("Unable to load book details. Please try again.");
+  }
+
+  if (!book) notFound();
+
+  return book;
+});
+
+export async function generateMetadata({ params }: BookPageProps) {
+  const { slug } = await params;
+  const book = await getBook(slug);
   return {
     title: `${book.name} • Rachel Rain Martin`,
     description: book.description?.slice(0, 150) || "",
@@ -38,17 +55,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function BookPage({ params }: { params: { slug: string } }) {
-  const supabase = createClient();
-  const { data: book, error } = await supabase
-    .from("books")
-    .select("*")
-    .eq("slug", params.slug)
-    .single();
-
-  if (error || !book) {
-    notFound();
-  }
+export default async function BookPage({ params }: BookPageProps) {
+  const { slug } = await params;
+  const book = await getBook(slug);
 
   const description = book.description || `In "${book.name}," Rachel Rain Martin explores emotion, connection, and the quiet power of change. This evocative story blends tenderness with introspection, guiding readers through landscapes of heart and mind that stay with them forever.`;
 
